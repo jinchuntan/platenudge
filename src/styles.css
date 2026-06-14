@@ -56,7 +56,7 @@
    2. Reset & base
    ------------------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body {
   font-family: var(--font-body);
@@ -109,6 +109,7 @@ body.has-topbar { padding-top: calc(var(--topbar-h) + env(safe-area-inset-top));
 .mt-2 { margin-top: var(--space-2); } .mt-3 { margin-top: var(--space-3); }
 .mt-4 { margin-top: var(--space-4); } .mt-5 { margin-top: var(--space-5); } .mt-6 { margin-top: var(--space-6); }
 .mb-3 { margin-bottom: var(--space-3); } .mb-4 { margin-bottom: var(--space-4); }
+.is-hidden { display: none; }
 
 /* -------------------------------------------------------------------------
    5. Icons
@@ -456,6 +457,9 @@ details.acc > summary:hover { background: var(--surface-2); }
 .pledge-option:hover { border-color: var(--primary); }
 .pledge-option:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
 .pledge-option input[type="radio"] { accent-color: var(--primary); width: 1.15rem; height: 1.15rem; flex: none; }
+
+/* Pledge confirmation message — hidden until shown by quiz.js (was inline style). */
+.pledge-confirmation { display: none; font-weight: 600; }
 
 .last-action-note { background: var(--accent-soft); border-radius: var(--radius); padding: var(--space-4); font-size: var(--text-sm); line-height: 1.45; }
 .last-action-note[hidden] { display: none; }

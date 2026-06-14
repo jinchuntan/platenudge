@@ -86,5 +86,6 @@ export default async function handler(req, res) {
   if (!result) return send(res, 502, { ok: false, error: 'unavailable' });
 
   result.provider = provider;
+  console.log(`[analyze-food] success via ${provider} (locale: ${locale})`);
   return send(res, 200, { ok: true, result });
 }

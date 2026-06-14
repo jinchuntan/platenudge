@@ -73,5 +73,6 @@ export default async function handler(req, res) {
   }
 
   if (!answer) return send(res, 502, { ok: false, error: 'unavailable' });
+  console.log(`[ask-food] success via ${provider} (locale: ${locale})`);
   return send(res, 200, { ok: true, answer, provider });
 }

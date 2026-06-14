@@ -7,10 +7,15 @@
  * AbortController available in the Vercel Node runtime.
  *
  * Env vars (server-only; do NOT prefix with VITE_):
- *   OPENROUTER_API_KEY, OPENROUTER_MODEL
- *   GROQ_API_KEY, GROQ_VISION_MODEL
+ *   OPENROUTER_API_KEY, OPENROUTER_MODEL    (model optional — see ai-config.js)
+ *   GROQ_API_KEY, GROQ_VISION_MODEL         (model optional — see ai-config.js)
  *   PUBLIC_SITE_URL (optional, for OpenRouter attribution headers)
+ *
+ * Model IDs are pinned in ai-config.js with env override, so the feature works
+ * with only the API keys set.
  */
+
+import { getOpenRouterModel, getGroqVisionModel } from './ai-config.js';
 
 const TIMEOUT_MS = 25000;
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -53,10 +58,11 @@ async function postChat(url, key, model, messages, { json = true, extraHeaders =
   }
 }
 
-/** OpenRouter (primary). Vision-capable model via OPENROUTER_MODEL. */
+/** OpenRouter (primary). Vision-capable model from ai-config (env-overridable). */
 export function openrouterChat(messages, opts) {
   const key = process.env.OPENROUTER_API_KEY;
-  const model = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
+  const model = getOpenRouterModel();
+  console.log(`[ai] OpenRouter request — model: ${model}`); // never logs the key
   return postChat(OPENROUTER_URL, key, model, messages, {
     ...opts,
     extraHeaders: {
@@ -66,9 +72,10 @@ export function openrouterChat(messages, opts) {
   });
 }
 
-/** Groq (backup). Vision-capable model via GROQ_VISION_MODEL. */
+/** Groq (backup). Vision-capable model from ai-config (env-overridable). */
 export function groqChat(messages, opts) {
   const key = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_VISION_MODEL || 'meta-llama/llama-4-scout-17b-16e-instruct';
+  const model = getGroqVisionModel();
+  console.log(`[ai] Groq request — model: ${model}`); // never logs the key
   return postChat(GROQ_URL, key, model, messages, opts);
 }

@@ -4,7 +4,7 @@
 
 PlateWise AR turns **curated food-waste images into AR learning exhibits**. Scan a food-waste image and a short AR exhibit appears over it — explaining what the waste represents, why it matters under SDG 12, and what you can do next. Inspired by food-waste museum concepts.
 
-> **Recognition scope (honest):** the app recognises **only the curated image targets** included with it — not arbitrary food photos — and it does **not** confirm food safety. A future AI mode could analyse uploaded photos; that is **not** part of this version (no AI / OpenRouter / backend yet).
+> **Recognition scope (honest):** the curated AR scan recognises **only the curated image targets** included with it — not arbitrary food photos. An **optional [AI Photo Mode](#ai-photo-mode-optional)** can analyse an uploaded photo via serverless routes, but it does **not** confirm food safety and never estimates exact weight or carbon. The curated AR scan is the core and works without AI.
 
 ---
 
@@ -100,6 +100,26 @@ The dev server will print a local URL (e.g. `http://localhost:5173`) and a netwo
 
 ---
 
+## AI Photo Mode (optional)
+
+PlateWise includes an **optional** AI Photo Mode (`ai.html`) that analyses an uploaded food-waste photo through serverless routes in `api/` (**OpenRouter** primary, **Groq** backup). It is fully additive: with **no keys configured** the page shows a friendly “not configured” message and the curated AR scan, Demo, Quiz, and language switching keep working.
+
+Set these in **Vercel → Project → Settings → Environment Variables**. They are **server-side only — never prefix with `VITE_`** (that would expose them to the browser bundle). Keys are read only inside `api/` functions and are never shipped to the frontend.
+
+| Variable | Required? | Default when unset |
+|----------|-----------|--------------------|
+| `OPENROUTER_API_KEY` | Required (primary provider) | — |
+| `GROQ_API_KEY` | Required (backup provider) | — |
+| `OPENROUTER_MODEL` | Optional | `openai/gpt-4o-mini` |
+| `GROQ_VISION_MODEL` | Optional | `meta-llama/llama-4-scout-17b-16e-instruct` |
+| `PUBLIC_SITE_URL` | Optional | OpenRouter attribution header only |
+
+The model defaults are **pinned in `src/ai-config.js`**. If a model env var is set it overrides the default; if it is unset (or blank) the built-in default is used — so AI Photo Mode runs with **only the API keys** set. See `.env.example` for a copy-paste template.
+
+> Local note: `vite dev`/`preview` do not run the `/api` functions, so AI shows its “unavailable” state locally. Use `vercel dev` (with the env vars set) to test AI end-to-end. `npm run build` is unaffected — Vite ignores `api/`.
+
+---
+
 ## How to Test on a Phone
 
 Camera-based AR **requires HTTPS or localhost**. To test on a mobile device:
@@ -190,7 +210,7 @@ platewisear/
 ## Known Limitations
 
 - **Curated image targets only.** The app recognises the included food-waste images (compiled into the `.mind` file) — **not** arbitrary food photos.
-- **No AI yet (by design).** No AI / OpenRouter / image analysis / object recognition / backend. These are planned future work (see below).
+- **Curated AR scan needs no AI.** The core scan is fully client-side. **AI Photo Mode is optional** (OpenRouter + Groq via serverless `api/`); with no keys set it shows an “unavailable” message and the rest of the app works unchanged.
 - **No food-safety diagnosis.** The app cannot judge whether food is safe to eat or share — it only offers general guidance and a safety note.
 - **No exact weight or carbon estimates.** Figures shown are sourced statistics, not per-item measurements.
 - **`.mind` file must be generated once.** Until `public/assets/targets/food-waste-targets.mind` exists, the Scan page shows “targets not installed”; Demo Mode works regardless.
